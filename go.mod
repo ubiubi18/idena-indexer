@@ -3,7 +3,9 @@ module github.com/idena-network/idena-indexer
 go 1.17
 
 replace github.com/cosmos/iavl => github.com/idena-network/iavl v0.12.3-0.20211223100228-a33b117aa31e
-
+replace github.com/confio/ics23/go => github.com/cosmos/ics23/go v0.11.0
+replace github.com/lucas-clemente/quic-go => github.com/quic-go/quic-go v0.37.2
+replace github.com/willf/bitset => github.com/bits-and-blooms/bitset v1.2.0
 require (
 	github.com/cosmos/iavl v0.15.3
 	github.com/deckarep/golang-set v1.7.1
@@ -277,3 +279,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.1.7 // indirect
 )
+replace github.com/lucas-clemente/quic-go => github.com/quic-go/quic-go v0.37.2
+replace github.com/bits-and-blooms/bitset => github.com/willf/bitset v1.2.0
+replace go.opentelemetry.io/otel/exporters/otlp => go.opentelemetry.io/otel/exporters/otlp v0.20.0
+replace github.com/ipfs/go-libipfs => github.com/ipfs/boxo v0.14.0
+
