@@ -15,8 +15,9 @@ trap cleanup EXIT HUP INT TERM
 run_isolated_suite() {
   binary=$1
   list_file=$2
+  package_dir=$3
 
-  "$binary" -test.list '^Test' >"$list_file"
+  (cd "$package_dir" && "$binary" -test.list '^Test') >"$list_file"
   while IFS= read -r test_name; do
     case "$test_name" in
       Test*[!A-Za-z0-9_]*)
@@ -31,10 +32,13 @@ run_isolated_suite() {
     esac
 
     printf '=== ISOLATED RUN   %s\n' "$test_name"
-    "$binary" \
-      -test.run "^${test_name}$" \
-      -test.count=1 \
-      -test.timeout=2m
+    (
+      cd "$package_dir"
+      "$binary" \
+        -test.run "^${test_name}$" \
+        -test.count=1 \
+        -test.timeout=2m
+    )
   done <"$list_file"
 }
 
@@ -43,5 +47,5 @@ run_isolated_suite() {
 # retry or consensus behavior.
 go test -c -o "$tmp_dir/indexer-tests" ./tests
 go test -c -o "$tmp_dir/postgres-tests" ./tests/postgres
-run_isolated_suite "$tmp_dir/indexer-tests" "$tmp_dir/indexer-tests.list"
-run_isolated_suite "$tmp_dir/postgres-tests" "$tmp_dir/postgres-tests.list"
+run_isolated_suite "$tmp_dir/indexer-tests" "$tmp_dir/indexer-tests.list" "$repo_root/tests"
+run_isolated_suite "$tmp_dir/postgres-tests" "$tmp_dir/postgres-tests.list" "$repo_root/tests/postgres"
