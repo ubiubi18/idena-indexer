@@ -27,7 +27,9 @@ python3 scripts/check_vulnerabilities.py
 
 The PostgreSQL integration suite runs in CI against a digest-pinned database
 image. Locally, with a disposable PostgreSQL instance accepting the example
-loopback connection, run `go test ./tests ./tests/postgres -count=1`.
+loopback connection, run `scripts/test-postgres-integration.sh`. The script
+serializes the two packages because they deliberately reuse and recreate the
+same disposable schema.
 
 The build script disables host VCS metadata and path-dependent build data. CI
 builds twice and requires byte-identical outputs; publish a checksum only from
