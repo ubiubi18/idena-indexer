@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	expectedReleaseID    = "idena-mainnet-legacy-compat-2026.07.12-rc2"
+	expectedReleaseID    = "idena-mainnet-legacy-compat-2026.07.12-rc3"
 	expectedLegacyCommit = "938be81dbdeff85f888f4337060a8ebabb12e5b5"
-	expectedNodeCommit   = "4947ddfd41391cca0e51dc2635aaa8a06827a890"
+	expectedNodeCommit   = "aafb254786ac3c82308550a7a82642019f077d6b"
 	expectedNodeVersion  = "v0.17.2-0.20260712191802-4947ddfd4139"
 	expectedBinding      = "v0.0.0-20260710141316-67ba065fdb02"
 )
