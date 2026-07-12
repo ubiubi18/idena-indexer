@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "exceptions": [
+    {
+      "id": "GO-2024-3218",
+      "module": "github.com/libp2p/go-libp2p-kad-dht",
+      "version": "v0.41.0",
+      "reachable": true,
+      "candidateOnly": true,
+      "fixedVersion": null,
+      "reviewedAt": "2026-07-12",
+      "reason": "Inherited through the locked Kubo runtime; no fixed upstream version is currently listed and removing DHT behavior would break legacy interoperability."
+    },
+    {
+      "id": "GO-2026-5932",
+      "module": "golang.org/x/crypto",
+      "version": "v0.54.0",
+      "reachable": false,
+      "candidateOnly": true,
+      "fixedVersion": null,
+      "reviewedAt": "2026-07-12",
+      "reason": "The module is inherited from the locked node graph, govulncheck finds no reachable symbol, and the vulnerability database currently lists no fixed version."
+    }
+  ]
+}

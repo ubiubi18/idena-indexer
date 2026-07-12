@@ -1,11 +1,12 @@
 package mempool
 
 import (
+	"time"
+
 	"github.com/idena-network/idena-indexer/db"
 	"github.com/idena-network/idena-indexer/log"
-	iface "github.com/ipfs/interface-go-ipfs-core"
+	iface "github.com/ipfs/kubo/core/coreiface"
 	"github.com/patrickmn/go-cache"
-	"time"
 )
 
 const (

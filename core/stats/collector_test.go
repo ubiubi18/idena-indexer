@@ -881,19 +881,19 @@ func TestStatsCollector_AddRewardsWithDelegatee(t *testing.T) {
 	c.AddValidationReward(delegatee2, delegator4, 4, new(big.Int).SetInt64(7), new(big.Int).SetInt64(8))
 
 	c.AddFlipsBasicReward(delegatee1, delegatee1, big.NewInt(9), big.NewInt(10), []*types.FlipToReward{
-		{[]byte{0x1}, types.GradeNone, decimal.NewFromInt32(8)},
+		{Cid: []byte{0x1}, Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
 	})
 	c.AddFlipsBasicReward(delegatee1, delegator1, big.NewInt(9), big.NewInt(10), []*types.FlipToReward{
-		{[]byte{0x1}, types.GradeNone, decimal.NewFromInt32(8)},
+		{Cid: []byte{0x1}, Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
 	})
 	c.AddFlipsBasicReward(delegatee1, delegator2, big.NewInt(11), big.NewInt(12), []*types.FlipToReward{
-		{[]byte{0x1}, types.GradeNone, decimal.NewFromInt32(8)},
+		{Cid: []byte{0x1}, Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
 	})
 	c.AddFlipsBasicReward(delegatee1, delegator3, big.NewInt(13), big.NewInt(14), []*types.FlipToReward{
-		{[]byte{0x1}, types.GradeNone, decimal.NewFromInt32(8)},
+		{Cid: []byte{0x1}, Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
 	})
 	c.AddFlipsBasicReward(delegatee2, delegator4, big.NewInt(15), big.NewInt(16), []*types.FlipToReward{
-		{[]byte{0x1}, types.GradeNone, decimal.NewFromInt32(8)},
+		{Cid: []byte{0x1}, Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
 	})
 
 	c.SetValidation(&types2.ValidationStats{
@@ -974,11 +974,11 @@ func TestStatsCollector_AddFlipsReward(t *testing.T) {
 	cid3, _ := cid.Parse("bafkreihcvhijrwwts3xl3zufbi2mjng5gltc7ojw2syue7zyritkq3gbii")
 
 	c.AddFlipsBasicReward(addr2, addr1, big.NewInt(1), big.NewInt(2), []*types.FlipToReward{
-		{cid1.Bytes(), types.GradeNone, decimal.NewFromInt32(8)},
-		{cid2.Bytes(), types.GradeNone, decimal.NewFromInt32(6)},
+		{Cid: cid1.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
+		{Cid: cid2.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(6)},
 	})
 	c.AddFlipsBasicReward(addr2, addr2, big.NewInt(3), big.NewInt(4), []*types.FlipToReward{
-		{cid3.Bytes(), types.GradeNone, decimal.NewFromInt32(4)},
+		{Cid: cid3.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(4)},
 	})
 	c.AddFlipsBasicReward(addr3, addr3, big.NewInt(4), big.NewInt(5), nil)
 	c.AddFlipsBasicReward(addr2, addr4, big.NewInt(6), big.NewInt(7), nil)
@@ -1033,22 +1033,22 @@ func TestStatsCollector_AddFlipsExtraReward(t *testing.T) {
 		{},
 		{},
 		{},
-		{cid1.Bytes(), types.GradeNone, decimal.NewFromInt32(8)},
-		{cid2.Bytes(), types.GradeNone, decimal.NewFromInt32(6)},
+		{Cid: cid1.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
+		{Cid: cid2.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(6)},
 	})
 	c.AddFlipsExtraReward(addr2, addr1, big.NewInt(1), big.NewInt(2), []*types.FlipToReward{
-		{cid1.Bytes(), types.GradeNone, decimal.NewFromInt32(8)},
-		{cid2.Bytes(), types.GradeNone, decimal.NewFromInt32(6)},
+		{Cid: cid1.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(8)},
+		{Cid: cid2.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(6)},
 	})
 
 	c.AddFlipsBasicReward(addr2, addr2, big.NewInt(3), big.NewInt(4), []*types.FlipToReward{
 		{},
 		{},
 		{},
-		{cid3.Bytes(), types.GradeNone, decimal.NewFromInt32(4)},
+		{Cid: cid3.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(4)},
 	})
 	c.AddFlipsExtraReward(addr2, addr2, big.NewInt(3), big.NewInt(4), []*types.FlipToReward{
-		{cid3.Bytes(), types.GradeNone, decimal.NewFromInt32(4)},
+		{Cid: cid3.Bytes(), Grade: types.GradeNone, GradeScore: decimal.NewFromInt32(4)},
 	})
 
 	c.AddFlipsExtraReward(addr3, addr3, big.NewInt(4), big.NewInt(5), nil)

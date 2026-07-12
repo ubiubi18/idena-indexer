@@ -1,8 +1,23 @@
 # IdeaIDE
 .idea
+.DS_Store
 
 # executables
 /*.exe
 *.exe~
 
-go.sum
+# local runtime and credentials
+.env
+.env.*
+!.env.example
+*.key
+api.key
+*.log
+conf/config.local.json
+conf/node.local.json
+tree-snapshots/
+data-dir/
+
+# build and coverage output
+/idena-indexer
+coverage.out

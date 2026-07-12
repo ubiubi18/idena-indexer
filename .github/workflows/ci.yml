@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: 1.26.5
+          cache: true
+      - name: Verify formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Verify module graph
+        run: go mod verify
+      - name: Enforce vulnerability policy
+        run: python3 scripts/check_vulnerabilities.py
+      - name: Test compatibility gate
+        run: go test ./compatibility
+      - name: Test release tooling
+        run: python3 -m unittest discover -s scripts -p '*_test.py' -v
+      - name: Compile all packages and tests
+        run: go test ./... -run '^$'
+      - name: Vet
+        run: go vet ./...
+      - name: Run unit tests
+        run: go test ./config ./core/... ./indexer/...
+      - name: Verify reproducible build
+        run: |
+          scripts/build-reproducible.sh /tmp/idena-indexer-a
+          scripts/build-reproducible.sh /tmp/idena-indexer-b
+          cmp /tmp/idena-indexer-a /tmp/idena-indexer-b
+
+  postgres-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.5-alpine3.21@sha256:5d004e058f520673f1f6edbad6b1603d5dab4c818e257c041889ef64672a8cc4
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check out
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: 1.26.5
+          cache: true
+      - name: Run PostgreSQL integration tests
+        run: go test ./tests ./tests/postgres -count=1
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out full history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Scan for secrets
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
