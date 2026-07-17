@@ -1,14 +1,26 @@
 package server
 
 import (
+	"errors"
 	"fmt"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"github.com/idena-network/idena-indexer/log"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
+	"time"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/idena-network/idena-indexer/log"
+)
+
+const (
+	maxRequestBodyBytes = 1 << 20
+	maxHeaderBytes      = 1 << 20
+	readHeaderTimeout   = 10 * time.Second
+	readTimeout         = 30 * time.Second
+	writeTimeout        = 2 * time.Minute
+	idleTimeout         = 2 * time.Minute
 )
 
 func NewServer(
@@ -39,10 +51,22 @@ func (s *Server) Start(routerInitializers ...RouterInitializer) {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-	err := http.ListenAndServe(fmt.Sprintf(":%d", s.port),
-		handlers.CORS(originsOk, headersOk, methodsOk)(s.requestFilter(apiRouter)))
+	handler := handlers.CORS(originsOk, headersOk, methodsOk)(s.requestFilter(apiRouter))
+	err := newHTTPServer(s.port, handler).ListenAndServe()
 	if err != nil {
 		panic(err)
+	}
+}
+
+func newHTTPServer(port int, handler http.Handler) *http.Server {
+	return &http.Server{
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           handler,
+		ReadHeaderTimeout: readHeaderTimeout,
+		ReadTimeout:       readTimeout,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       idleTimeout,
+		MaxHeaderBytes:    maxHeaderBytes,
 	}
 }
 
@@ -57,6 +81,9 @@ func (s *Server) generateReqId() int {
 func (s *Server) requestFilter(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqId := s.generateReqId()
+		if r.Body != nil {
+			r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodyBytes)
+		}
 		var urlToLog *url.URL
 		lowerUrlPath := strings.ToLower(r.URL.Path)
 		if !strings.Contains(lowerUrlPath, "/search") {
@@ -67,6 +94,11 @@ func (s *Server) requestFilter(next http.Handler) http.Handler {
 		err := r.ParseForm()
 		if err != nil {
 			s.log.Error("Unable to parse API request", "reqId", reqId, "err", err)
+			var maxBytesError *http.MaxBytesError
+			if errors.As(err, &maxBytesError) {
+				http.Error(w, "request body too large", http.StatusRequestEntityTooLarge)
+				return
+			}
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
