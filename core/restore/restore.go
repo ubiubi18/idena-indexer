@@ -47,23 +47,32 @@ func (r *Restorer) tryToRestore() error {
 }
 
 func (r *Restorer) collectData() (*db.RestoredData, error) {
-	res := &db.RestoredData{}
-	var err error
-	if res.Balances, err = r.collectBalances(); err != nil {
+	height, err := r.restoreHeight()
+	if err != nil {
 		return nil, err
 	}
-	if res.Birthdays, res.PoolSizes, res.Delegations, err = r.collectIdentityData(); err != nil {
+	res := &db.RestoredData{BlockHeight: height}
+	if res.Balances, err = r.collectBalances(height); err != nil {
+		return nil, err
+	}
+	if res.Birthdays, res.PoolSizes, res.Delegations, err = r.collectIdentityData(height); err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func (r *Restorer) collectBalances() ([]db.Balance, error) {
+func (r *Restorer) restoreHeight() (uint64, error) {
 	head := r.chain.Head
 	if head == nil {
-		return nil, errors.New("blockchain header is nil")
+		return 0, errors.New("blockchain header is nil")
 	}
-	height := head.Height() - 1
+	if head.Height() == 0 {
+		return 0, errors.New("blockchain header height is zero")
+	}
+	return head.Height() - 1, nil
+}
+
+func (r *Restorer) collectBalances(height uint64) ([]db.Balance, error) {
 	appState, err := r.appState.Readonly(height)
 	if err != nil {
 		return nil, errors.Errorf("unable to get appState for height %d, err %v", height, err.Error())
@@ -85,12 +94,7 @@ func (r *Restorer) collectBalances() ([]db.Balance, error) {
 	return balances, nil
 }
 
-func (r *Restorer) collectIdentityData() ([]db.Birthday, []*db.PoolSize, []*db.Delegation, error) {
-	head := r.chain.Head
-	if head == nil {
-		return nil, nil, nil, errors.New("blockchain header is nil")
-	}
-	height := head.Height() - 1
+func (r *Restorer) collectIdentityData(height uint64) ([]db.Birthday, []*db.PoolSize, []*db.Delegation, error) {
 	appState, err := r.appState.Readonly(height)
 	if err != nil {
 		return nil, nil, nil, errors.Errorf("unable to get appState for height %d, err %v", height, err.Error())
