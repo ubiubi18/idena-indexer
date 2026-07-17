@@ -47,15 +47,19 @@ func (r *Restorer) tryToRestore() error {
 }
 
 func (r *Restorer) collectData() (*db.RestoredData, error) {
-	height, err := r.restoreHeight()
+	indexedHeight, err := r.db.GetLastHeight()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get last indexed block height")
+	}
+	stateHeight, err := r.restoreHeight()
 	if err != nil {
 		return nil, err
 	}
-	res := &db.RestoredData{BlockHeight: height}
-	if res.Balances, err = r.collectBalances(height); err != nil {
+	res := &db.RestoredData{BlockHeight: indexedHeight}
+	if res.Balances, err = r.collectBalances(stateHeight); err != nil {
 		return nil, err
 	}
-	if res.Birthdays, res.PoolSizes, res.Delegations, err = r.collectIdentityData(height); err != nil {
+	if res.Birthdays, res.PoolSizes, res.Delegations, err = r.collectIdentityData(stateHeight); err != nil {
 		return nil, err
 	}
 	return res, nil
