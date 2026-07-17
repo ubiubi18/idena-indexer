@@ -16,6 +16,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 		Schema:            testCommon.PostgresSchema,
 		ScriptsPathPrefix: "..",
 	})
+	defer ctx.Listener.Destroy()
 
 	statsCollector := ctx.Listener.StatsCollector()
 	appState := ctx.Listener.NodeCtx().AppState
@@ -178,6 +179,7 @@ func Test_upgradeVotingShortHistory(t *testing.T) {
 		UpgradeVotingShortHistoryItems:    testCommon.Pint(6),
 		UpgradeVotingShortHistoryMinShift: testCommon.Pint(0),
 	})
+	defer ctx.Listener.Destroy()
 
 	statsCollector := ctx.Listener.StatsCollector()
 	appState := ctx.Listener.NodeCtx().AppState

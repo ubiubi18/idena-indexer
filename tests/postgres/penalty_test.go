@@ -12,7 +12,9 @@ import (
 )
 
 func Test_penalty(t *testing.T) {
-	_, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	dbConnector, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	defer dbConnector.Close()
+	defer dbAccessor.Destroy()
 	address1 := tests.GetRandAddr()
 	address2 := tests.GetRandAddr()
 
@@ -51,7 +53,9 @@ func Test_penalty(t *testing.T) {
 }
 
 func Test_penaltySeconds(t *testing.T) {
-	_, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	dbConnector, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	defer dbConnector.Close()
+	defer dbAccessor.Destroy()
 	address1 := tests.GetRandAddr()
 	address2 := tests.GetRandAddr()
 	address3 := tests.GetRandAddr()
@@ -96,7 +100,9 @@ func Test_penaltySeconds(t *testing.T) {
 }
 
 func Test_PenaltyWithNotPaidPreviousOne(t *testing.T) {
-	_, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	dbConnector, dbAccessor := common.InitDefaultPostgres(filepath.Join("..", ".."))
+	defer dbConnector.Close()
+	defer dbAccessor.Destroy()
 	address := tests.GetRandAddr()
 
 	// When
