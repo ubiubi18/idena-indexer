@@ -1,7 +1,13 @@
 package state
 
 import (
+	"archive/tar"
 	"fmt"
+	"io"
+	"os"
+	"path"
+	"sync"
+
 	"github.com/cosmos/iavl"
 	"github.com/golang/protobuf/proto"
 	"github.com/idena-network/idena-go/common"
@@ -10,14 +16,8 @@ import (
 	"github.com/idena-network/idena-go/core/state"
 	models "github.com/idena-network/idena-go/protobuf"
 	"github.com/idena-network/idena-indexer/log"
-	"github.com/mholt/archiver/v3"
 	"github.com/pkg/errors"
 	db "github.com/tendermint/tm-db"
-	"io"
-	"io/ioutil"
-	"os"
-	"path"
-	"sync"
 )
 
 type Holder interface {
@@ -93,15 +93,7 @@ func (h *holderImpl) getState(epoch uint64) (*state.StateDB, error) {
 }
 
 func readTreeFrom(pdb *db.PrefixDB, height uint64, from io.Reader) error {
-	tar := archiver.Tar{
-		MkdirAll:               true,
-		OverwriteExisting:      false,
-		ImplicitTopLevelFolder: false,
-	}
-
-	if err := tar.Open(from, 0); err != nil {
-		return err
-	}
+	tr := tar.NewReader(from)
 
 	tree := state.NewMutableTree(pdb)
 	importer, err := tree.Importer(int64(height))
@@ -110,8 +102,28 @@ func readTreeFrom(pdb *db.PrefixDB, height uint64, from io.Reader) error {
 	}
 	defer importer.Close()
 
-	for file, err := tar.Read(); err == nil; file, err = tar.Read() {
-		if data, err := ioutil.ReadAll(file); err != nil {
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			common.ClearDb(pdb)
+			return err
+		}
+		if header.Typeflag == tar.TypeDir {
+			continue
+		}
+		if header.Typeflag != tar.TypeReg && header.Typeflag != tar.TypeRegA {
+			common.ClearDb(pdb)
+			return errors.Errorf("unsupported snapshot entry %q type %d", header.Name, header.Typeflag)
+		}
+		if header.Size < 0 || header.Size > state.MaxSnapshotChunkBytes {
+			common.ClearDb(pdb)
+			return errors.Errorf("snapshot chunk %q size %d exceeds limit %d", header.Name, header.Size, state.MaxSnapshotChunkBytes)
+		}
+
+		if data, err := io.ReadAll(tr); err != nil {
 			common.ClearDb(pdb)
 			return err
 		} else {
@@ -121,6 +133,18 @@ func readTreeFrom(pdb *db.PrefixDB, height uint64, from io.Reader) error {
 				return err
 			}
 			for _, node := range sb.Nodes {
+				if node == nil {
+					common.ClearDb(pdb)
+					return errors.New("snapshot contains a nil node")
+				}
+				if node.Version > math.MaxInt64 {
+					common.ClearDb(pdb)
+					return errors.Errorf("snapshot node version %d exceeds limit %d", node.Version, math.MaxInt64)
+				}
+				if node.Height > math.MaxInt8 {
+					common.ClearDb(pdb)
+					return errors.Errorf("snapshot node height %d exceeds limit %d", node.Height, math.MaxInt8)
+				}
 
 				exportNode := &iavl.ExportNode{
 					Key:     node.Key,
@@ -133,7 +157,10 @@ func readTreeFrom(pdb *db.PrefixDB, height uint64, from io.Reader) error {
 					exportNode.Value = make([]byte, 0)
 				}
 
-				importer.Add(exportNode)
+				if err := importer.Add(exportNode); err != nil {
+					common.ClearDb(pdb)
+					return errors.Wrap(err, "import snapshot node")
+				}
 			}
 		}
 	}

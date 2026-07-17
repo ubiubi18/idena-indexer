@@ -139,8 +139,8 @@ func (t *TestUpgradesVotingHolder) Get() []*upgrade.Votes {
 	res := make([]*upgrade.Votes, 0, len(t.upgradesVotes))
 	for _, v := range t.upgradesVotes {
 		res = append(res, &upgrade.Votes{
-			v.Upgrade,
-			v.Votes,
+			Upgrade: v.Upgrade,
+			Votes:   v.Votes,
 		})
 	}
 	return res

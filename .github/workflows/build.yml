@@ -1,0 +1,49 @@
+name: Build and audit
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae5bb9f99f9d78822c9ce6e31029131c93f10 # v6
+        with:
+          go-version: 1.26.5
+          cache: true
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -count=1 ./...
+
+      - name: Build
+        run: go build -mod=readonly -trimpath ./...
+
+      - name: Scan dependencies
+        run: ./scripts/govulncheck-filter.sh
