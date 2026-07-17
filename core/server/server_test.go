@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -39,4 +40,22 @@ func TestRequestFilterRejectsOversizedFormBody(t *testing.T) {
 
 	require.Equal(t, http.StatusRequestEntityTooLarge, recorder.Code)
 	require.False(t, nextCalled)
+}
+
+func TestRequestFilterDoesNotLogRequestMetadata(t *testing.T) {
+	var output bytes.Buffer
+	logger := log.New()
+	logger.SetHandler(log.StreamHandler(&output, log.LogfmtFormat()))
+	server := NewServer(0, logger)
+	handler := server.requestFilter(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+	request := httptest.NewRequest(http.MethodGet, "http://localhost/private/path?api_key=secret", nil)
+	request.Header.Set("X-Forwarded-For", "203.0.113.10")
+	recorder := httptest.NewRecorder()
+
+	handler.ServeHTTP(recorder, request)
+
+	require.NotContains(t, output.String(), "/private/path")
+	require.NotContains(t, output.String(), "api_key")
+	require.NotContains(t, output.String(), "secret")
+	require.NotContains(t, output.String(), "203.0.113.10")
 }

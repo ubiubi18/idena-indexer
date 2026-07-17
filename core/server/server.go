@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -84,16 +83,10 @@ func (s *Server) requestFilter(next http.Handler) http.Handler {
 		if r.Body != nil {
 			r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodyBytes)
 		}
-		var urlToLog *url.URL
-		lowerUrlPath := strings.ToLower(r.URL.Path)
-		if !strings.Contains(lowerUrlPath, "/search") {
-			urlToLog = r.URL
-		}
-		ip := GetIP(r)
-		s.log.Debug("Got api request", "reqId", reqId, "url", urlToLog, "from", ip)
+		s.log.Debug("Got api request", "reqId", reqId)
 		err := r.ParseForm()
 		if err != nil {
-			s.log.Error("Unable to parse API request", "reqId", reqId, "err", err)
+			s.log.Error("Unable to parse API request", "reqId", reqId)
 			var maxBytesError *http.MaxBytesError
 			if errors.As(err, &maxBytesError) {
 				http.Error(w, "request body too large", http.StatusRequestEntityTooLarge)
