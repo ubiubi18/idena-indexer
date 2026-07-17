@@ -73,6 +73,7 @@ const (
 )
 
 type RestoredData struct {
+	BlockHeight uint64
 	Balances    []Balance
 	Birthdays   []Birthday
 	PoolSizes   []*PoolSize

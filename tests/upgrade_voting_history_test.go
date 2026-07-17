@@ -16,6 +16,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 		Schema:            testCommon.PostgresSchema,
 		ScriptsPathPrefix: "..",
 	})
+	defer ctx.Listener.Destroy()
 
 	statsCollector := ctx.Listener.StatsCollector()
 	appState := ctx.Listener.NodeCtx().AppState
@@ -62,7 +63,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 	require.Nil(t, err)
 	require.Empty(t, history)
 
-	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 10}, {2, 20}, {3, 30}})
+	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 10}, {Upgrade: 2, Votes: 20}, {Upgrade: 3, Votes: 30}})
 	height = 4
 	statsCollector.EnableCollecting()
 	block = buildBlock(height)
@@ -73,7 +74,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 	require.Nil(t, err)
 	require.Empty(t, history)
 
-	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 11}, {2, 21}, {3, 31}})
+	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 11}, {Upgrade: 2, Votes: 21}, {Upgrade: 3, Votes: 31}})
 	time.Sleep(time.Second * 2)
 	height = 5
 	statsCollector.EnableCollecting()
@@ -85,7 +86,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 	require.Nil(t, err)
 	require.Len(t, history, 1)
 
-	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 12}, {2, 22}, {3, 32}})
+	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 12}, {Upgrade: 2, Votes: 22}, {Upgrade: 3, Votes: 32}})
 	time.Sleep(time.Second * 2)
 	height = 6
 	statsCollector.EnableCollecting()
@@ -97,7 +98,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 	require.Nil(t, err)
 	require.Len(t, history, 3)
 
-	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 13}, {2, 23}, {3, 33}})
+	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 13}, {Upgrade: 2, Votes: 23}, {Upgrade: 3, Votes: 33}})
 	time.Sleep(time.Second * 2)
 	height = 7
 	statsCollector.EnableCollecting()
@@ -109,7 +110,7 @@ func Test_upgradeVotingHistory(t *testing.T) {
 	require.Nil(t, err)
 	require.Len(t, history, 4)
 
-	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 14}, {2, 24}, {3, 34}})
+	ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 14}, {Upgrade: 2, Votes: 24}, {Upgrade: 3, Votes: 34}})
 	time.Sleep(time.Second * 2)
 	height = 8
 	statsCollector.EnableCollecting()
@@ -178,6 +179,7 @@ func Test_upgradeVotingShortHistory(t *testing.T) {
 		UpgradeVotingShortHistoryItems:    testCommon.Pint(6),
 		UpgradeVotingShortHistoryMinShift: testCommon.Pint(0),
 	})
+	defer ctx.Listener.Destroy()
 
 	statsCollector := ctx.Listener.StatsCollector()
 	appState := ctx.Listener.NodeCtx().AppState
@@ -209,7 +211,7 @@ func Test_upgradeVotingShortHistory(t *testing.T) {
 	time.Sleep(time.Second * 2)
 
 	for height = 3; height < 14; height++ {
-		ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{1, 1000 + height}})
+		ctx.UpgradesVotingHolder.Set([]*upgrade.Votes{{Upgrade: 1, Votes: 1000 + height}})
 		statsCollector.EnableCollecting()
 		block = buildBlock(height)
 		require.Nil(t, applyBlock(ctx.EventBus, block, appState))

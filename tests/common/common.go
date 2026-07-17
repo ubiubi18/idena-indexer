@@ -24,8 +24,9 @@ import (
 )
 
 const (
-	PostgresConnStr = "postgres://postgres@localhost?sslmode=disable"
-	PostgresSchema  = "auto_test_schema"
+	PostgresConnStr        = "postgres://postgres@localhost?sslmode=disable"
+	PostgresSchema         = "auto_test_schema"
+	PostgresAccessorSchema = "auto_postgres_test_schema"
 )
 
 var defaultScriptsPath = filepath.Join("resources", "scripts", "indexer")
@@ -66,7 +67,10 @@ func InitIndexer(
 		Consensus: &config2.ConsensusConf{},
 	}
 	tokenContractHolder := new(stats.TokenContractHolderImpl)
-	listener := NewTestListener(nodeEventBus, stats.NewStatsCollector(collectorEventBus, chain.Config().Consensus, tokenContractHolder), appState, nodeCtx, chain.SecStore(), nodeConfig)
+	listener := NewTestListener(nodeEventBus, stats.NewStatsCollector(collectorEventBus, chain.Config().Consensus, tokenContractHolder), appState, nodeCtx, chain.SecStore(), nodeConfig, func() {
+		dbAccessor.Destroy()
+		_ = dbConnector.Close()
+	})
 	tokenContractHolder.ProvideNodeCtx(nodeCtx, nodeConfig)
 	restorer := restore.NewRestorer(dbAccessor, appState, chain.Blockchain)
 	upgradesVotingHolder := &TestUpgradesVotingHolder{}
@@ -169,7 +173,10 @@ func InitIndexer2(opt Options) *IndexerCtx {
 	}
 	nodeEventBus := eventbus.New()
 	collectorEventBus := eventbus.New()
-	listener := NewTestListener(nodeEventBus, stats.NewStatsCollector(collectorEventBus, chain.Config().Consensus, opt.TokenContractHolder), appState, nodeCtx, chain.SecStore(), opt.NodeConfig)
+	listener := NewTestListener(nodeEventBus, stats.NewStatsCollector(collectorEventBus, chain.Config().Consensus, opt.TokenContractHolder), appState, nodeCtx, chain.SecStore(), opt.NodeConfig, func() {
+		dbAccessor.Destroy()
+		_ = dbConnector.Close()
+	})
 	restorer := restore.NewRestorer(dbAccessor, appState, chain.Blockchain)
 	upgradesVotingHolder := &TestUpgradesVotingHolder{}
 	indexerEventBus := eventbus.New()
@@ -237,7 +244,7 @@ func InitPostgres(
 }
 
 func InitDefaultPostgres(scriptsPathPrefix string) (*sql.DB, db.Accessor) {
-	return InitPostgres(true, 0, PostgresSchema, scriptsPathPrefix,
+	return InitPostgres(true, 0, PostgresAccessorSchema, scriptsPathPrefix,
 		monitoring.NewEmptyPerformanceMonitor())
 }
 

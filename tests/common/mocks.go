@@ -35,6 +35,8 @@ type TestListener struct {
 	keysPool    *mempool.KeysPool
 	secStore    *secstore.SecStore
 	config      *config.Config
+	onDestroy   func()
+	destroyOnce sync.Once
 }
 
 func NewTestListener(
@@ -44,6 +46,7 @@ func NewTestListener(
 	nodeCtx *node.NodeCtx,
 	secStore *secstore.SecStore,
 	config *config.Config,
+	onDestroy func(),
 ) incoming.Listener {
 	return &TestListener{
 		bus:       bus,
@@ -53,6 +56,7 @@ func NewTestListener(
 		keysPool:  &mempool.KeysPool{},
 		secStore:  secStore,
 		config:    config,
+		onDestroy: onDestroy,
 	}
 }
 
@@ -106,7 +110,12 @@ func (l *TestListener) NodeEventBus() eventbus.Bus {
 }
 
 func (l *TestListener) Destroy() {
-	l.secStore.Destroy()
+	l.destroyOnce.Do(func() {
+		l.secStore.Destroy()
+		if l.onDestroy != nil {
+			l.onDestroy()
+		}
+	})
 }
 
 func (l *TestListener) WaitForStop() {
@@ -139,8 +148,8 @@ func (t *TestUpgradesVotingHolder) Get() []*upgrade.Votes {
 	res := make([]*upgrade.Votes, 0, len(t.upgradesVotes))
 	for _, v := range t.upgradesVotes {
 		res = append(res, &upgrade.Votes{
-			v.Upgrade,
-			v.Votes,
+			Upgrade: v.Upgrade,
+			Votes:   v.Votes,
 		})
 	}
 	return res
