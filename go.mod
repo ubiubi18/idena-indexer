@@ -13,13 +13,13 @@ require (
 	github.com/deckarep/golang-set v1.8.0
 	github.com/go-stack/stack v1.8.1
 	github.com/golang/protobuf v1.5.4
-	github.com/gorilla/handlers v1.4.2
+	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
 	github.com/idena-network/idena-go v0.17.2-0.20260716170708-bef27247eebb
 	github.com/idena-network/idena-wasm-binding v0.0.0-20260710141316-67ba065fdb02
 	github.com/ipfs/go-cid v0.6.2
 	github.com/ipfs/kubo v0.42.0
-	github.com/lib/pq v1.10.3
+	github.com/lib/pq v1.12.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/shopspring/decimal v1.4.0
