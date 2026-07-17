@@ -66,7 +66,7 @@ func Test_complex(t *testing.T) {
 	// Then
 	addressSummaries, _ := testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 3, addressSummaries[0].Flips)
 	require.Equal(t, 0, addressSummaries[0].WrongWordsFlips)
 
@@ -85,7 +85,7 @@ func Test_complex(t *testing.T) {
 	// Then
 	addressSummaries, _ = testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 2, addressSummaries[0].Flips)
 	require.Equal(t, 0, addressSummaries[0].WrongWordsFlips)
 
@@ -168,7 +168,7 @@ func Test_complex(t *testing.T) {
 	require.Equal(t, 2, epochIdentities[0].LongAnswers)
 	addressSummaries, _ = testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 2, addressSummaries[0].Flips)
 	require.Equal(t, 1, addressSummaries[0].WrongWordsFlips)
 
@@ -228,7 +228,7 @@ func Test_complex(t *testing.T) {
 	// Then
 	addressSummaries, _ = testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 4, addressSummaries[0].Flips)
 	require.Equal(t, 1, addressSummaries[0].WrongWordsFlips)
 
@@ -327,7 +327,7 @@ func Test_complex(t *testing.T) {
 	require.Equal(t, 2, epochIdentities[1].LongAnswers)
 	addressSummaries, _ = testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 4, addressSummaries[0].Flips)
 	require.Equal(t, 2, addressSummaries[0].WrongWordsFlips)
 
@@ -415,7 +415,7 @@ func Test_complex(t *testing.T) {
 	require.Nil(t, err)
 	addressSummaries, _ = testCommon.GetAddressSummaries(dbConnector)
 	require.Equal(t, 1, len(addressSummaries))
-	require.Equal(t, 1, addressSummaries[0].AddressId)
+	require.Equal(t, addr.Hex(), addressSummaries[0].Address)
 	require.Equal(t, 3, addressSummaries[0].Flips)
 	require.Equal(t, 1, addressSummaries[0].WrongWordsFlips)
 

@@ -426,13 +426,15 @@ func GetEpochIdentities(db *sql.DB) ([]EpochIdentity, error) {
 }
 
 type AddressSummary struct {
-	AddressId       int
+	Address         string
 	Flips           int
 	WrongWordsFlips int
 }
 
 func GetAddressSummaries(db *sql.DB) ([]AddressSummary, error) {
-	rows, err := db.Query(`select address_id, flips, wrong_words_flips from address_summaries`)
+	rows, err := db.Query(`select a.address, s.flips, s.wrong_words_flips
+		from address_summaries s
+		join addresses a on a.id = s.address_id`)
 	if err != nil {
 		return nil, err
 	}
@@ -441,7 +443,7 @@ func GetAddressSummaries(db *sql.DB) ([]AddressSummary, error) {
 	for rows.Next() {
 		item := AddressSummary{}
 		err := rows.Scan(
-			&item.AddressId,
+			&item.Address,
 			&item.Flips,
 			&item.WrongWordsFlips,
 		)
