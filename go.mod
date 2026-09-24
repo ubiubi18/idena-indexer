@@ -1,6 +1,6 @@
 module github.com/idena-network/idena-indexer
 
-go 1.26.5
+go 1.26.8
 
 replace github.com/cosmos/iavl => github.com/idena-network/iavl v0.12.3-0.20211223100228-a33b117aa31e
 
@@ -25,7 +25,7 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tendermint/tm-db v0.6.7
-	golang.org/x/image v0.44.0
+	golang.org/x/image v0.45.0
 	gopkg.in/urfave/cli.v1 v1.20.0
 )
 
@@ -188,7 +188,7 @@ require (
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/petar/GoLLRB v0.0.0-20210522233825-ae3b015fd3e9 // indirect
 	github.com/pion/datachannel v1.5.10 // indirect
-	github.com/pion/dtls/v3 v3.1.2 // indirect
+	github.com/pion/dtls/v3 v3.1.4 // indirect
 	github.com/pion/ice/v4 v4.0.10 // indirect
 	github.com/pion/interceptor v0.1.40 // indirect
 	github.com/pion/logging v0.2.4 // indirect
@@ -199,9 +199,9 @@ require (
 	github.com/pion/sctp v1.8.39 // indirect
 	github.com/pion/sdp/v3 v3.0.18 // indirect
 	github.com/pion/srtp/v3 v3.0.6 // indirect
-	github.com/pion/stun/v3 v3.1.1 // indirect
+	github.com/pion/stun/v3 v3.1.5 // indirect
 	github.com/pion/transport/v3 v3.0.7 // indirect
-	github.com/pion/transport/v4 v4.0.1 // indirect
+	github.com/pion/transport/v4 v4.0.2 // indirect
 	github.com/pion/turn/v4 v4.0.2 // indirect
 	github.com/pion/webrtc/v4 v4.1.2 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -211,8 +211,8 @@ require (
 	github.com/prometheus/common v0.67.5 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.59.1 // indirect
-	github.com/quic-go/webtransport-go v0.10.0 // indirect
+	github.com/quic-go/quic-go v0.60.0 // indirect
+	github.com/quic-go/webtransport-go v0.11.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/rjeczalik/notify v0.9.3 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
@@ -255,21 +255,21 @@ require (
 	go.uber.org/zap/exp v0.3.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/crypto v0.56.0 // indirect
 	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
 	golang.org/x/mod v0.38.0 // indirect
-	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
-	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.48.0 // indirect
 	golang.org/x/vuln v1.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	gonum.org/v1/gonum v0.17.0 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
-	google.golang.org/grpc v1.82.1 // indirect
+	google.golang.org/grpc v1.83.2 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
