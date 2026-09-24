@@ -6,7 +6,7 @@ replace github.com/cosmos/iavl => github.com/idena-network/iavl v0.12.3-0.202112
 
 replace github.com/idena-network/idena-go => github.com/ubiubi18/idena-go v0.17.2-0.20260716170708-bef27247eebb
 
-replace github.com/idena-network/idena-wasm-binding => github.com/ubiubi18/idena-wasm-binding v0.0.0-20260710141316-67ba065fdb02
+replace github.com/idena-network/idena-wasm-binding => github.com/ubiubi18/idena-wasm-binding v0.0.0-20260923235352-01ccca5cc3c9
 
 require (
 	github.com/cosmos/iavl v1.3.6
