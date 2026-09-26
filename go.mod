@@ -25,7 +25,7 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tendermint/tm-db v0.6.7
-	golang.org/x/image v0.44.0
+	golang.org/x/image v0.45.0
 	gopkg.in/urfave/cli.v1 v1.20.0
 )
 
